@@ -4,7 +4,7 @@ const path = require('path')
 const spawn = require('child_process').spawn
 
 debug.enabled = true
-module.exports = function (dir, _modules) {
+module.exports = function (dir, _modules, cb) {
   const fullPath = path.join(dir, 'package.json')
   debug('getting dependencies from %s', fullPath)
   const package = JSON.parse(fs.readFileSync(fullPath))
@@ -43,29 +43,12 @@ module.exports = function (dir, _modules) {
     test(modules[i], function (code) {
       if(code) {
         debug('tests for '+modules[i]+' failed with:'+code)
-        process.exit(code)
+//        process.exit(code)
+        cb(code)
       }
       else
         next(++i)
     })
   })(0)
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

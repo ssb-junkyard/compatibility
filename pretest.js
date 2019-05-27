@@ -80,12 +80,14 @@ module.exports = function (dir, cb) {
       if (err) throw err
       // avoid tests passing via Travis CI if dependencies are out-of-date
       debug('done! please re-run tests with these new dependencies')
-      process.exit(1)
+      //process.exit(1)
+      cb(new Error('compatibility:updated devdeps'))
     })
 
 
   } else {
     debug('plugin devDeps look great!')
+    cb()
   }
 }
 
