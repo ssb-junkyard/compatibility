@@ -1,0 +1,25 @@
+{
+  "name": "compatibility",
+  "description": "run your dependencies tests, to check they are compatible",
+  "version": "1.0.0",
+  "homepage": "https://github.com/ssbc/compatibility",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ssbc/compatibility.git"
+  },
+  "dependencies": {
+    "debug": "^4.1.1",
+    "npm-install-package": "^2.1.0",
+    "semver": "^6.1.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "tape test/*.js"
+  },
+  "maintainers": [
+    "dominictarr",
+    "christianbundy"
+  ],
+  "author": "Dominic Tarr @EMovhfIrFk4NihAKnRNhrfRaqIhBv1Wj8pTxJNgvCCY=.ed25519)",
+  "license": "MIT"
+}

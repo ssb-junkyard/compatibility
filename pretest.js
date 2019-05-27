@@ -1,4 +1,3 @@
-#!/usr/bin/env node
 const fs = require('fs')
 const path = require('path')
 const semver = require('semver')
@@ -20,17 +19,18 @@ if (!Object.entries) {
 
 debug.enabled = true
 
-if (process.env.NODE_ENV != 'production') {
-  const dir = process.cwd()
+module.exports = function (dir, cb) {
   const fullPath = path.join(dir, 'package.json')
   debug('getting dependencies from %s', fullPath)
-  const package = JSON.parse(fs.readFileSync(fullPath)
+  const package = JSON.parse(fs.readFileSync(fullPath))
   // get dependencies from ssb-server
   const root_module = package.name
-  const plugins = package.compatibilty
+  const plugins = package.compatibility || []
   const parent = {}
-  Object.entries(package.dependencies).forEach(e => parent[e[0]] = e[1])
-  Object.entries(package.devDependencies).forEach(e => parent[e[0]] = e[1])
+  if(plugins.length == 0)
+    throw new Error('compatibility: please specify an array of dependencies to be tested in package.json')
+  Object.entries(package.dependencies || {}).forEach(e => parent[e[0]] = e[1])
+  Object.entries(package.devDependencies || {}).forEach(e => parent[e[0]] = e[1])
 
   // initialize empty array for new deps needed
   const needDeps = []
@@ -41,7 +41,7 @@ if (process.env.NODE_ENV != 'production') {
     debug('getting dependencies from %s', fullPath)
     const package = JSON.parse(fs.readFileSync(fullPath))
     const pluginDeps = {}
-    Object.entries(package.devDependencies).forEach(e => pluginDeps[e[0]] = e[1])
+    Object.entries(package.devDependencies || {}).forEach(e => pluginDeps[e[0]] = e[1])
 
     Object.entries(pluginDeps).forEach(e => {
       const [ k, v ] = e
@@ -88,4 +88,6 @@ if (process.env.NODE_ENV != 'production') {
     debug('plugin devDeps look great!')
   }
 }
+
+
 
