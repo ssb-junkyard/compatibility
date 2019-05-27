@@ -58,7 +58,7 @@ module.exports = function (dir, cb) {
             ]
 
             pairs.forEach(pair => {
-              if (semver.intersects(pair[0], pair[1]) === false) {
+              if (pair[0] && semver.intersects(pair[0], pair[1]) === false) {
                 throw new Error('plugins have incompatible devDependencies, for:'+k+' '+pair.join(' '))
               }
             })
@@ -90,6 +90,10 @@ module.exports = function (dir, cb) {
     cb()
   }
 }
+
+
+
+
 
 
 
