@@ -20,12 +20,16 @@ module.exports = function (dir, _modules, cb) {
 
   function test(name, cb) {
     debug('testing dependency for compatibilty:'+name)
-    var pkg = JSON.parse(fs.readFileSync(path.join(dir, 'node_modules', name, 'package.json')))
+    var mod_dir = path.join(dir, 'node_modules', name)
+    var pkg = JSON.parse(fs.readFileSync(path.join(mod_dir, 'package.json')))
     if(!pkg.scripts.test)
       throw new Error('compatibility: module to be tested is missing tests:'+name)
     debug('running test script: ' + pkg.scripts.test)
 
-    var cp = spawn('bash', ['-c', pkg.scripts.test], {stdio: ['inherit', 'inherit', 'inherit']})
+    var cp = spawn('bash', ['-c', pkg.scripts.test], {
+      stdio: ['inherit', 'inherit', 'inherit'],
+      cwd: mod_dir
+    })
     cp.on('exit', cb)
   }
 
