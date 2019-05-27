@@ -1,7 +1,7 @@
 {
   "name": "compatibility",
   "description": "run your dependencies tests, to check they are compatible",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "homepage": "https://github.com/ssbc/compatibility",
   "repository": {
     "type": "git",
@@ -16,7 +16,7 @@
   "scripts": {
     "test": "tape test/*.js"
   },
-  "bin":"./bin.js",
+  "bin": "./bin.js",
   "maintainers": [
     "dominictarr",
     "christianbundy"
