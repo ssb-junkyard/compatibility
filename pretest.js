@@ -2,7 +2,7 @@
 const fs = require('fs')
 const path = require('path')
 const semver = require('semver')
-const debug = require('debug')('ssb-server:pretest')
+const debug = require('debug')('compatibility:pretest')
 var install = require('npm-install-package')
 
 // polyfill!
@@ -21,22 +21,13 @@ if (!Object.entries) {
 debug.enabled = true
 
 if (process.env.NODE_ENV != 'production') {
-  const plugins = [
-    'ssb-gossip',
-    'ssb-blobs',
-    'ssb-invite',
-    'ssb-replicate',
-    'ssb-ebt',
-    'ssb-db',
-    'ssb-ooo',
-    'ssb-plugins'
-  ]
-
-
-  // get dependencies from ssb-server
-  const fullPath = path.join(__dirname, '..', 'package.json')
+  const dir = process.cwd()
+  const fullPath = path.join(dir, 'package.json')
   debug('getting dependencies from %s', fullPath)
-  const package = JSON.parse(fs.readFileSync(fullPath))
+  const package = JSON.parse(fs.readFileSync(fullPath)
+  // get dependencies from ssb-server
+  const root_module = package.name
+  const plugins = package.compatibilty
   const parent = {}
   Object.entries(package.dependencies).forEach(e => parent[e[0]] = e[1])
   Object.entries(package.devDependencies).forEach(e => parent[e[0]] = e[1])
@@ -46,7 +37,7 @@ if (process.env.NODE_ENV != 'production') {
 
   // get dependencies from plugin directories
   plugins.forEach(plugin => {
-    const fullPath = path.join(__dirname, '..', 'node_modules', plugin, 'package.json')
+    const fullPath = path.join(dir, 'node_modules', plugin, 'package.json')
     debug('getting dependencies from %s', fullPath)
     const package = JSON.parse(fs.readFileSync(fullPath))
     const pluginDeps = {}
@@ -56,7 +47,7 @@ if (process.env.NODE_ENV != 'production') {
       const [ k, v ] = e
 
       if (Object.keys(parent).includes(k) === false || semver.intersects(parent[k], v) === false) {
-        if (k !== 'ssb-server' ) {
+        if (k !== root_module ) {
           if (needDeps[k] == null) {
             debug('new dependency from %s: %o', plugin, { name: k, range: v })
             needDeps[k] = v
