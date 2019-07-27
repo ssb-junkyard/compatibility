@@ -7,13 +7,13 @@ debug.enabled = true
 module.exports = function (dir, _modules, cb) {
   const fullPath = path.join(dir, 'package.json')
   debug('getting dependencies from %s', fullPath)
-  const package = JSON.parse(fs.readFileSync(fullPath))
+  const parentPackage = JSON.parse(fs.readFileSync(fullPath))
   // get dependencies from ssb-server
-  var modules = package.compatibility
+  var modules = parentPackage.compatibility
   if(!modules.length)
     throw new Error('compatibility: please specify an array of dependencies to be tested in package.json')
 
-  const root_module = package.name
+  const root_module = parentPackage.name
   try {
     fs.symlinkSync(dir, path.join(dir, 'node_modules', root_module))
   } catch(_) { }
@@ -21,12 +21,12 @@ module.exports = function (dir, _modules, cb) {
   function test(name, cb) {
     debug('testing dependency for compatibilty:'+name)
     var mod_dir = path.join(dir, 'node_modules', name)
-    var pkg = JSON.parse(fs.readFileSync(path.join(mod_dir, 'package.json')))
-    if(!pkg.scripts.test)
+    const childPackage = JSON.parse(fs.readFileSync(path.join(mod_dir, 'package.json')))
+    if(!childPackage.scripts.test)
       throw new Error('compatibility: module to be tested is missing tests:'+name)
-    debug('running test script: ' + pkg.scripts.test)
+    debug('running test script: ' + childPackage.scripts.test)
 
-    var cp = spawn('bash', ['-c', pkg.scripts.test], {
+    var cp = spawn('bash', ['-c', childPackage.scripts.test], {
       stdio: ['inherit', 'inherit', 'inherit'],
       cwd: mod_dir
     })
