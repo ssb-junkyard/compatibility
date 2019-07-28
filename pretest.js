@@ -22,15 +22,15 @@ debug.enabled = true
 module.exports = function (dir, cb) {
   const fullPath = path.join(dir, 'package.json')
   debug('getting dependencies from %s', fullPath)
-  const package = JSON.parse(fs.readFileSync(fullPath))
+  const parentPackage = JSON.parse(fs.readFileSync(fullPath))
   // get dependencies from ssb-server
-  const root_module = package.name
-  const plugins = package.compatibility || []
+  const root_module = parentPackage.name
+  const plugins = parentPackage.compatibility || []
   const parent = {}
   if(plugins.length == 0)
     throw new Error('compatibility: please specify an array of dependencies to be tested in package.json')
-  Object.entries(package.dependencies || {}).forEach(e => parent[e[0]] = e[1])
-  Object.entries(package.devDependencies || {}).forEach(e => parent[e[0]] = e[1])
+  Object.entries(parentPackage.dependencies || {}).forEach(e => parent[e[0]] = e[1])
+  Object.entries(parentPackage.devDependencies || {}).forEach(e => parent[e[0]] = e[1])
 
   // initialize empty array for new deps needed
   const needDeps = []
@@ -39,9 +39,9 @@ module.exports = function (dir, cb) {
   plugins.forEach(plugin => {
     const fullPath = path.join(dir, 'node_modules', plugin, 'package.json')
     debug('getting dependencies from %s', fullPath)
-    const package = JSON.parse(fs.readFileSync(fullPath))
+    const childPackage = JSON.parse(fs.readFileSync(fullPath))
     const pluginDeps = {}
-    Object.entries(package.devDependencies || {}).forEach(e => pluginDeps[e[0]] = e[1])
+    Object.entries(childPackage.devDependencies || {}).forEach(e => pluginDeps[e[0]] = e[1])
 
     Object.entries(pluginDeps).forEach(e => {
       const [ k, v ] = e
