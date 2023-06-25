@@ -10,7 +10,7 @@
   "dependencies": {
     "debug": "^4.1.1",
     "npm-install-package": "^2.1.0",
-    "semver": "^6.1.0"
+    "semver": "^7.5.2"
   },
   "devDependencies": {},
   "scripts": {
